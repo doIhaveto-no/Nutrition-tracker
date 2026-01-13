@@ -30,18 +30,25 @@ function App() {
     return (
         <>
             {/* kao sto mozete da vidite ovako se dodaju komentari u html, a ne ovako <!-- --> kako zasto, ne znam */}
-            <header style={{background:'#fcf5f5', padding:'1rem'}}>
+            <header style={{background:'#fcf5f5', padding:'20px', position:'fixed'}}>
                 <nav> 
-                    <button onClick={() =>skrol('pocet')} style={{marginRight:'1rem'}}>
+                    <button onClick={() =>skrol('pocet')} style={{padding:'10px 20px'}}>
                         Početna
                     </button>
-                    <button onClick={() =>skrol('namirnice')}>
+                    <button onClick={() =>skrol('namirnice')} style={{padding:'10px 20px'}}>
                         Namirnice
+                    </button>
+                    <button onClick={() =>skrol('kontakt')} style={{padding:'10px 20px'}}>
+                        Kontakt
                     </button>
                     {/*//TODO ovde dodajte dugmice*/}
                 </nav>
             </header>
-            
+            <section id="pocetna" style={{minHeight:'600px',padding:'32px'}}>
+                <h1>Nutrition tracker</h1>
+                <input type="tekst"placeholder="Ždrao sam..." value={trazi} onChange={(e)=>setTrazi(e.target.value)}
+                style={{padding:''}}
+            </section>
             <h1>Vite + React</h1>
             <div className="card">
                 <button onClick={() => setCount((count) => count + 1)}>
