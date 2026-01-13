@@ -6,7 +6,6 @@ function Header() {
     return (
         <header style={{background:'#fcf5f5', padding: '15px 0', position: 'fixed', width: '100%',top:'0',zIndex:'1000'}}>
             <nav style={{display:'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1200px', margin: '0 auto', padding: '0 20px'}}>
-                {/* videcu da li ce ovo trebati <div style={{display:'flex',gap:'15px',alignItems:'center'}}></div>*/}
                 <button onClick={() =>drstr('home')} 
                     style={{padding:'10px 20px', background: window.location.pathname.startsWith("home") ? 'rgba(255,255,255,0.2)' : 'transparent',
                         color:'#292121', border:'none'
@@ -28,7 +27,6 @@ function Header() {
                         color:'#292121', border:'none'}}>
                     Prijavi se
                 </button>
-                {/*//TODO ovde dodajte dugmice*/}
             </nav>
         </header>
     );
