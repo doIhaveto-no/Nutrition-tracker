@@ -30,8 +30,8 @@ function App() {
     return (
         <>
             {/* kao sto mozete da vidite ovako se dodaju komentari u html, a ne ovako <!-- --> kako zasto, ne znam */}
-            <header style={{background:'#fcf5f5', padding:'20px', position:'fixed'}}>
-                <nav> 
+            <header style={{background:'#fcf5f5', padding: '15px 0', position: 'fixed', width: '100%'}}>
+                <nav style={{justifyContent: 'space-between', alignItems: 'center', maxWidth: '1200px', margin: '0 auto', padding: '0 20px'}}>
                     <button onClick={() =>skrol('pocet')} style={{padding:'10px 20px'}}>
                         Početna
                     </button>
@@ -44,11 +44,17 @@ function App() {
                     {/*//TODO ovde dodajte dugmice*/}
                 </nav>
             </header>
-            <section id="pocetna" style={{minHeight:'600px',padding:'32px'}}>
+            <section id="pocetna" style={{minHeight:'700px',padding:'40px',paddingTop:'100px', background:'linear-gradient(#decaca,#ed6d6d 0%,#cf3636 100%)'}}>
                 <h1>Nutrition tracker</h1>
                 <input type="tekst"placeholder="Ždrao sam..." value={trazi} onChange={(e)=>setTrazi(e.target.value)}
-                style={{padding:''}}
+                    style={{width:'100%',padding:'15px',border:'none',marginBottom:'20px'}}></input>
+                {/* <p style={{textAlign:'center'}}>Pronađeno {filterhrane.lenght} namirnica</p>*/}
+                {/* ovde ide lepo da se prikazu pronadjenje namirnice */}
             </section>
+            <section id="namirnice" style={{minHeight:'500px',padding:'40px',background:'#decaca'}}>
+
+            </section>
+            {/*
             <h1>Vite + React</h1>
             <div className="card">
                 <button onClick={() => setCount((count) => count + 1)}>
@@ -60,7 +66,7 @@ function App() {
             </div>
             <p className="read-the-docs">
                 Click on the Vite and React logos to learn more
-            </p>
+            </p>*/}
         </>
     );
 }
