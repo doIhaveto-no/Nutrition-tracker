@@ -1,7 +1,11 @@
 function Namirnice() {
     return (
-        <>
-            Zderi brate, niko ne gleda
+        <>            
+            <section className="full-screen" style={{background:'linear-gradient(#decaca,#ed6d6d 0%,#cf3636 100%)'}}>
+                <h1>Zderi brate, niko ne gleda</h1>
+                {/* <p style={{textAlign:'center'}}>Pronađeno {filterhrane.lenght} namirnica</p>*/}
+                {/* ovde ide lepo da se prikazu pronadjenje namirnice */}
+            </section>
         </>
     );
 }

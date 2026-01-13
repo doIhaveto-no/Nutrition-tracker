@@ -1,5 +1,5 @@
 @import "tailwindcss";
-.full-screen-section {
-  width: 100vw;  /* 100% of the viewport width */
-  height: 100vh; /* 100% of the viewport height */
+.full-screen{
+  width: 100vw; 
+  height: 100vh; 
 }

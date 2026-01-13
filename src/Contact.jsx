@@ -1,7 +1,11 @@
 function Contact() {
     return (
-        <>
-            How to contact us: dont
+        <>            
+            <section className="full-screen" style={{background:'linear-gradient(#decaca,#ed6d6d 0%,#cf3636 100%)'}}>
+                <h1>How to contact us: dont</h1>
+                {/* <p style={{textAlign:'center'}}>Pronađeno {filterhrane.lenght} namirnica</p>*/}
+                {/* ovde ide lepo da se prikazu pronadjenje namirnice */}
+            </section>
         </>
     );
 }
