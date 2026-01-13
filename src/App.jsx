@@ -85,7 +85,7 @@ function App() {
          */}
 
             <section id="pocetna" style={{minHeight:'800px',padding:'40px',paddingTop:'100px', background:'linear-gradient(#decaca,#ed6d6d 0%,#cf3636 100%)'}}>
-                <h1>Nutrition tracker</h1>
+                <h1>Nutrition Tracker</h1>
                 <input type="tekst"placeholder="Ždrao sam..." value={trazi} onChange={(e)=>setTrazi(e.target.value)}
                     style={{width:'100%',padding:'15px',border:'none',marginBottom:'20px'}}></input>
                 {/* <p style={{textAlign:'center'}}>Pronađeno {filterhrane.lenght} namirnica</p>*/}
