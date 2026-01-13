@@ -1,11 +1,17 @@
 import js from '@eslint/js';
+import json from '@eslint/json';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
-    globalIgnores(['dist']),
+    globalIgnores(['dist', "package-lock.json"]),
+    {
+        plugins: {
+            json,
+        },
+    },
     {
         files: ['**/*.{js,jsx}'],
         extends: [
@@ -24,8 +30,13 @@ export default defineConfig([
         },
         rules: {
             'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
-            'indent': ["error", 4],
-            'semi': ["error"]
+            'indent': ['error', 4],
+            'semi': 'error',
         },
+    },
+    {
+        files: ['**/*.json'],
+        language: "json/json",
+        extends: [json.configs.recommended],
     },
 ]);
