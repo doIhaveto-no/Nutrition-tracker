@@ -3,19 +3,27 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import Root from "./root.jsx";
 import App from "./App.jsx";
+import ErrorPage from "./ErrorPage.jsx";
 
 const router = createBrowserRouter([
     {
         path: "/",
         Component: Root,
+        middleware: [() => redirectMiddleware("/", "/home/")],
         children: [
             {
                 path: "home/",
                 Component: App
             },
         ],
+        ErrorBoundary: ErrorPage
     },
 ]);
+
+function redirectMiddleware(from, to) {
+    if (window.location.pathname != from) return;
+    window.location.replace(to);
+}
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
