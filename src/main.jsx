@@ -5,6 +5,8 @@ import Root from "./root.jsx";
 import App from "./App.jsx";
 import ErrorPage from "./ErrorPage.jsx";
 import Contact from "./Contact.jsx";
+import Login from "./login.jsx";
+import Namirnice from "./namirnice.jsx";
 
 const router = createBrowserRouter([
     {
@@ -19,6 +21,14 @@ const router = createBrowserRouter([
             {
                 path: "contact/",
                 Component: Contact
+            },
+            {
+                path: "login/",
+                Component:Login
+            },
+            {
+                path: "namirnice/",
+                Component:Namirnice
             },
         ],
         ErrorBoundary: ErrorPage
