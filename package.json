@@ -8,6 +8,7 @@
     "dev-frontend-host": "vite --host",
     "dev-backend": "node --watch .\\backend\\api.js",
     "dev": "node --watch index.js",
+    "dev-nowatch": "node index.js",
     "build": "vite build",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",

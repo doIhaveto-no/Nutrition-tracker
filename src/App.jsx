@@ -4,17 +4,19 @@ import './App.css';
 function App() {
     const [count, setCount] = useState(0);
     const [trazi, setTrazi] = useState('');
-    const [activeSection,setActiveSection] = useState('pocet'); 
-    const [klik,setKlik]= useState(false);
+    const [activeSection, setActiveSection] = useState('pocet'); 
+    const [klik, setKlik] = useState(false);
 
     //TODO inace u cemu je razlika izmedju ovog i normalnog komentara
+    //TODO je highlightovan, osim toga ništa
     //inace evo je lista namirnica za primer
     const hrana = [
         {id:1, ime:'Jabuka', brkal:52},
         {id:2,ime:'Banana', brkal:89},
         {id:3, ime:'Paradajz',brkal:18}
     ];
-    //TODO promeniti, izbrisati, nesto uraditi sa ovim gore4
+    //TODO zameniti listu hrana pozivom na API
+
     const filterhrane = hrana.filter(hrana => hrana.ime.toLowerCase().includes(trazi.toLowerCase()));
     //pokusavam nesto do not judge me
     const skrol = (secId) =>{
@@ -24,9 +26,11 @@ function App() {
             elem.scrollIntoView({behavior:'smooth'});
         }
     };
+    
     useEffect(() =>{
         console.log("Da li sam uxitan");
     },[]);
+
     return (
         <>
             {/* kao sto mozete da vidite ovako se dodaju komentari u html, a ne ovako <!-- --> kako zasto, ne znam */}
@@ -46,6 +50,7 @@ function App() {
             </header>
             <section id="pocetna" style={{minHeight:'700px',padding:'40px',paddingTop:'100px', background:'linear-gradient(#decaca,#ed6d6d 0%,#cf3636 100%)'}}>
                 <h1>Nutrition tracker</h1>
+                <input type="tekst"placeholder="Ždrao sam..." value={trazi} onChange={(e)=>setTrazi(e.target.value)} style={{padding:''}}></input>
                 <input type="tekst"placeholder="Ždrao sam..." value={trazi} onChange={(e)=>setTrazi(e.target.value)}
                     style={{width:'100%',padding:'15px',border:'none',marginBottom:'20px'}}></input>
                 {/* <p style={{textAlign:'center'}}>Pronađeno {filterhrane.lenght} namirnica</p>*/}
