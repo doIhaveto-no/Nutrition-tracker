@@ -1,7 +1,11 @@
 function Login() {
     return (
-        <>
-            No you don't need it.
+        <>            
+            <section className="full-screen" style={{background:'linear-gradient(#decaca,#f58488 0%,#ff1a22 100%)'}}>
+                <h1>No you don't need it.</h1>
+                {/* <p style={{textAlign:'center'}}>Pronađeno {filterhrane.lenght} namirnica</p>*/}
+                {/* ovde ide lepo da se prikazu pronadjenje namirnice */}
+            </section>
         </>
     );
 }
