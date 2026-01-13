@@ -1,7 +1,7 @@
 import express from "express";
 
 const app = express();
-const PORT = 4173;
+const PORT = 5173;
 
 app.route('/api/test')
     .get((req, res) => {
@@ -16,6 +16,8 @@ app.route('/api/test')
         res.send("Delete request test response");
     });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
+export default {app, server};
