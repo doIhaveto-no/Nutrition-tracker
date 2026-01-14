@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import json from '@eslint/json';
+import tseslint from 'typescript-eslint';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
@@ -30,6 +31,7 @@ export default defineConfig([
         },
         rules: {
             'no-unused-vars': ['warn', { varsIgnorePattern: '^[A-Z_]' }],
+            'prefer-const': ['error'],
             'indent': ['error', 4],
             'semi': 'error',
         },
@@ -38,5 +40,16 @@ export default defineConfig([
         files: ['**/*.json'],
         language: "json/json",
         extends: [json.configs.recommended],
+    },
+    {
+        files: ['**/*.{ts,tsx}'],
+        plugins: { '@typescript-eslint': tseslint.plugin },
+        extends: [
+            tseslint.configs.recommended
+        ],
+        rules: {
+            'indent': ['error', 4],
+            'semi': 'error',
+        },
     },
 ]);
