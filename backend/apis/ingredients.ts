@@ -11,8 +11,6 @@ const TABLE_NAME = 'ingredients';
 const router: Router = express.Router();
 
 router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all ingredients
-    const conn = await createConnection();
-
     let limit: number;
     try { limit = parseInt((req.query.limit || "20").toString()); }
     catch { 
@@ -21,8 +19,17 @@ router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all ingredients
         return;
     }
 
+    let page: number;
+    try { page = parseInt((req.query.page || "1").toString()); }
+    catch {
+        res.status(400);
+        res.json({ "error": "Parameter page must be an integer" });
+        return;
+    }
+    
+    const conn = await createConnection();
     try {
-        const response = await conn.query(`SELECT * FROM ${TABLE_NAME} LIMIT ${limit};`);
+        const response = await conn.query(`SELECT * FROM ${TABLE_NAME} OFFSET ${(page - 1) * limit} ROWS FETCH NEXT ${limit} ROWS ONLY;`);
         Joi.assert(response, schemas.ingredients);
 
         res.status(200);
@@ -166,20 +173,20 @@ router.route(`/${TABLE_NAME}/:id`).get(async (req, res) => {
 
     const conn = await createConnection();
     try {
-        const response: Ingredients = await conn.query(`SELECT * FROM ${TABLE_NAME} WHERE id=${id};`);
-        Joi.assert(response, schemas.ingredients);
-        if (response.length > 0) {
+        const response_old: Ingredients = await conn.query(`SELECT * FROM ${TABLE_NAME} WHERE id=${id};`);
+        Joi.assert(response_old, schemas.ingredients);
+        if (response_old.length > 0) {
             let food: Ingredient | null = req.body;
             
             try { Joi.assert(food, schemas.food); }
             catch { food = null; }
             
             if (food) {
-                const response: Ingredients = await conn.query(`REPLACE INTO ${TABLE_NAME} VALUES (${id}, ?, ?, ?, ?, ?, ?, ?) RETURNING *;`, [food.name_sr, food.name_en, food.kcal, food.protein, food.carbohydrates, food.fats, food.type]);
-                Joi.assert(response, schemas.ingredients);
+                const response_new: Ingredients = await conn.query(`REPLACE INTO ${TABLE_NAME} VALUES (${id}, ?, ?, ?, ?, ?, ?, ?) RETURNING *;`, [food.name_sr, food.name_en, food.kcal, food.protein, food.carbohydrates, food.fats, food.type]);
+                Joi.assert(response_new, schemas.ingredients);
                 
                 res.status(201);
-                res.json(response);
+                res.json([response_old[0], response_new[0]]);
             } else {
                 console.error(`Couldn't resolve POST /api/${TABLE_NAME} request body`);
                 res.status(400);
