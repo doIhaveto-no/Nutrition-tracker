@@ -12,8 +12,9 @@ const router: Router = express.Router();
 
 router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all ingredients
     const conn = await createConnection();
+
     try {
-        const response = await conn.query(`SELECT * FROM ${TABLE_NAME};`);
+        const response = await conn.query(`SELECT * FROM ${TABLE_NAME} LIMIT ?;`, [req.query.limit || 20]);
         Joi.assert(response, schemas.ingredients);
 
         res.status(200);
