@@ -2,15 +2,15 @@ import express from "express";
 import { type Router } from "express";
 import schemas from "../schemas.ts";
 import Joi from "joi";
-import { type Ingredient, type Ingredients } from "../types.ts";
+import { type Food, type Foods } from "../types.ts";
 import { createConnection } from "./db_utils.ts";
 
 
-const TABLE_NAME = 'ingredients';
+const TABLE_NAME = 'foods';
 
 const router: Router = express.Router();
 
-router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all ingredients
+router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all foods
     let limit: number;
     try { limit = parseInt((req.query.limit || "20").toString()); }
     catch { 
@@ -30,7 +30,7 @@ router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all ingredients
     const conn = await createConnection();
     try {
         const response = await conn.query(`SELECT * FROM ${TABLE_NAME} OFFSET ${(page - 1) * limit} ROWS FETCH NEXT ${limit} ROWS ONLY;`);
-        Joi.assert(response, schemas.ingredients);
+        Joi.assert(response, schemas.foods);
 
         res.status(200);
         res.json(response);
@@ -41,38 +41,38 @@ router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all ingredients
     } finally {
         conn.end();
     }
-}).post(async (req, res) => { // Add an ingredient
-    const insert: Ingredient | Ingredients = req.body;
-    let ingredient: Ingredient | null;
-    let ingredients: Ingredients | null;
+}).post(async (req, res) => { // Add an food
+    const insert: Food | Foods = req.body;
+    let food: Food | null;
+    let foods: Foods | null;
 
-    // Check if multiple ingredients or one
-    try { ingredient = Joi.attempt(insert, schemas.ingredient); }
-    catch { ingredient = null; }
+    // Check if multiple foods or one
+    try { food = Joi.attempt(insert, schemas.food); }
+    catch { food = null; }
 
-    try { ingredients = Joi.attempt(insert, schemas.ingredients); }
-    catch { ingredients = null; }
+    try { foods = Joi.attempt(insert, schemas.foods); }
+    catch { foods = null; }
 
     // Send query and return result/handle errors
     const conn = await createConnection();
     try {
-        const query = `INSERT INTO ${TABLE_NAME} (name_sr, name_en, kcal, protein, carbohydrates, fats, type) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING *;`;
+        const query = `INSERT INTO ${TABLE_NAME} (name_sr, name_en, kcal, protein, carbohydrates, fats) VALUES (?, ?, ?, ?, ?, ?) RETURNING *;`;
         const dbValues: Array<Array<string | number>> = [];
 
-        if (ingredient) {
-            const response: Ingredients = await conn.query(query, [ingredient.name_sr, ingredient.name_en, ingredient.kcal, ingredient.protein, ingredient.carbohydrates, ingredient.fats, ingredient.type]);
-            Joi.assert(response, schemas.ingredients);
+        if (food) {
+            const response: Foods = await conn.query(query, [food.name_sr, food.name_en, food.kcal, food.protein, food.carbohydrates, food.fats]);
+            Joi.assert(response, schemas.foods);
 
             res.status(201);
             res.json(response[0]);
-        } else if (ingredients) {
-            ingredients.forEach(ingredient => {
-                const vals = [ingredient.name_sr, ingredient.name_en, ingredient.kcal, ingredient.protein, ingredient.carbohydrates, ingredient.fats, ingredient.type];
+        } else if (foods) {
+            foods.forEach(food => {
+                const vals = [food.name_sr, food.name_en, food.kcal, food.protein, food.carbohydrates, food.fats];
                 dbValues.push(vals);
             });
 
-            const response: Ingredients = await conn.batch(query, dbValues);
-            Joi.assert(response, schemas.ingredients);
+            const response: Foods = await conn.batch(query, dbValues);
+            Joi.assert(response, schemas.foods);
 
             res.status(201);
             res.json(response);
@@ -84,13 +84,13 @@ router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all ingredients
     } catch (err) {
         console.error(err);
         res.status(500);
-        res.json({ error: "The server couldn't add ingredient or returned an invalid response" });
+        res.json({ error: "The server couldn't add food or returned an invalid response" });
     } finally {
         conn.end();
     }
 });
 
-router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search ingredient by name or type
+router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search food by name or type
     // Validate parameters
     if (!(req.query.query || req.query.type)) {
         res.status(400);
@@ -135,8 +135,8 @@ router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search ingred
 
     // Search and return results/handle errors
     try {
-        const response: Ingredients = await conn.query(db_query, db_values);
-        Joi.assert(response, schemas.ingredients);
+        const response: Foods = await conn.query(db_query, db_values);
+        Joi.assert(response, schemas.foods);
 
         res.status(200);
         res.json(response);
@@ -161,8 +161,8 @@ router.route(`/${TABLE_NAME}/:id`).get(async (req, res) => {
 
     const conn = await createConnection();
     try {
-        const response: Ingredients = await conn.query(`SELECT * FROM ${TABLE_NAME} WHERE id=${id};`);
-        Joi.assert(response, schemas.ingredients);
+        const response: Foods = await conn.query(`SELECT * FROM ${TABLE_NAME} WHERE id=${id};`);
+        Joi.assert(response, schemas.foods);
         if (response.length > 0) {
             res.status(200);
             res.json(response[0]);
@@ -173,7 +173,7 @@ router.route(`/${TABLE_NAME}/:id`).get(async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500);
-        res.json({ error: "The server couldn't get ingredient or returned an invalid response" });
+        res.json({ error: "The server couldn't get food or returned an invalid response" });
     } finally {
         conn.end();
     }
@@ -189,17 +189,17 @@ router.route(`/${TABLE_NAME}/:id`).get(async (req, res) => {
 
     const conn = await createConnection();
     try {
-        const response_old: Ingredients = await conn.query(`SELECT * FROM ${TABLE_NAME} WHERE id=${id};`);
-        Joi.assert(response_old, schemas.ingredients);
+        const response_old: Foods = await conn.query(`SELECT * FROM ${TABLE_NAME} WHERE id=${id};`);
+        Joi.assert(response_old, schemas.foods);
         if (response_old.length > 0) {
-            let food: Ingredient | null = req.body;
+            let food: Food | null = req.body;
             
             try { Joi.assert(food, schemas.food); }
             catch { food = null; }
             
             if (food) {
-                const response_new: Ingredients = await conn.query(`REPLACE INTO ${TABLE_NAME} VALUES (${id}, ?, ?, ?, ?, ?, ?, ?) RETURNING *;`, [food.name_sr, food.name_en, food.kcal, food.protein, food.carbohydrates, food.fats, food.type]);
-                Joi.assert(response_new, schemas.ingredients);
+                const response_new: Foods = await conn.query(`REPLACE INTO ${TABLE_NAME} VALUES (${id}, ?, ?, ?, ?, ?, ?) RETURNING *;`, [food.name_sr, food.name_en, food.kcal, food.protein, food.carbohydrates, food.fats]);
+                Joi.assert(response_new, schemas.foods);
                 
                 res.status(201);
                 res.json([response_old[0], response_new[0]]);
@@ -215,7 +215,7 @@ router.route(`/${TABLE_NAME}/:id`).get(async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500);
-        res.json({ error: "The server couldn't update ingredient or returned an invalid response" });
+        res.json({ error: "The server couldn't update food or returned an invalid response" });
     } finally {
         conn.end();
     }
@@ -230,11 +230,11 @@ router.route(`/${TABLE_NAME}/:id`).get(async (req, res) => {
 
     const conn = await createConnection();
     try {
-        const response_check: Ingredients = await conn.query(`SELECT * FROM ${TABLE_NAME} WHERE id=${id}`);
-        Joi.assert(response_check, schemas.ingredients);
+        const response_check: Foods = await conn.query(`SELECT * FROM ${TABLE_NAME} WHERE id=${id}`);
+        Joi.assert(response_check, schemas.foods);
         if (response_check.length > 0) {
-            const response: Ingredients = await conn.query(`DELETE FROM ${TABLE_NAME} WHERE id=${id} RETURNING *`);
-            Joi.assert(response, schemas.ingredients);
+            const response: Foods = await conn.query(`DELETE FROM ${TABLE_NAME} WHERE id=${id} RETURNING *`);
+            Joi.assert(response, schemas.foods);
 
             res.status(200);
             res.json(response);
@@ -245,7 +245,7 @@ router.route(`/${TABLE_NAME}/:id`).get(async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500);
-        res.json({ error: "The server couldn't delete ingredient or returned an invalid response"});
+        res.json({ error: "The server couldn't delete food or returned an invalid response"});
     } finally {
         conn.end();
     }

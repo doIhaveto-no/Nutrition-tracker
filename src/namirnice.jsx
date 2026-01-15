@@ -1,22 +1,42 @@
 import { useState,useEffect } from 'react';
+import axios from 'axios'
 function Namirnice() {
-    const [trenstr, setTrenstr] = useState('pocetna'); 
+   // const [trenstr, setTrenstr] = useState('pocetna'); 
     const [trazi, setTrazi] = useState('');
     const [klik, setKlik] = useState(false);
+    const [hrana, setHrana] = useState([]);
+    const [ucita,setUcita] =useState(true);
+    const [eror, setEror] = useState(null);
 
-    //TODO inace u cemu je razlika izmedju ovog i normalnog komentara
-    //TODO je highlightovan, osim toga ništa
-    //inace evo je lista namirnica za primer
-    const hrana = [
-        {id:1, ime:'Jabuka', brkal:52},
-        {id:2,ime:'Banana', brkal:89},
-        {id:3, ime:'Paradajz',brkal:18}
-    ];
+
+    useEffect(() => {
+        uzmiNamirnice();
+    }, []);
     //TODO zameniti listu hrana pozivom na API
+    const  uzmiNamirnice = async () => {
+        try{
+            const response = await axios.get('http://localhost:5173/api/ingredients');
+            setHrana(response.data.map(item =>({
+                id: item.id,
+                name_sr: item.name_sr,
+                name_en: item.name_en,
+                kcal: item.kcal,
+                protein: item.protein,
+                carbohydrates: item.carbohydrates,
+                fats: item.fats,
+                type: item.type
+            })));
+            setUcita(false);
+        }
+        catch(greska){
+            setEror('Imamo gresku, jej');
+            setUcita(false);
+            console.error(greska);
+        }
+    };
 
-    const filterhrane = hrana.filter(hrana => hrana.ime.toLowerCase().includes(trazi.toLowerCase()));
-    //pokusavam nesto do not judge me
-    const drstr = (str) =>{setTrenstr(str);};
+    const filterhrane = uzmiNamirnice.filter(uzmiNamirnice=> uzmiNamirnice.name_sr.toLowerCase().includes(trazi.toLowerCase()));
+    //const drstr = (str) =>{setTrenstr(str);};
     useEffect(() =>{
         console.log("Da li je stranica uxitana");
     },[]);

@@ -13,4 +13,20 @@ const ingredient = Joi.object({
 
 const ingredients = Joi.array().items(ingredient);
 
-export default { ingredient, ingredients };
+const food = Joi.object({
+    id: Joi.number().integer().positive().optional(),
+    name_sr: Joi.string().max(24).required(),
+    name_en: Joi.string().max(24).required(),
+    kcal: Joi.number().positive().unit('kcal').required(),
+    protein: Joi.number().min(0).unit('g').required(),
+    carbohydrates: Joi.number().min(0).unit('g').required(),
+    fats: Joi.number().min(0).unit('g').required()
+});
+
+const foods = Joi.array().items(food);
+
+const error = Joi.object({
+    error: Joi.string().required()
+});
+
+export default { ingredient, ingredients, food, foods, error };
