@@ -5,7 +5,8 @@ function Namirnice() {
     const [hrana, setHrana] = useState([]);
     const [ucita,setUcita] =useState(true);
     const [eror, setEror] = useState(null);
-    const [page, setPage] = useState(2);
+    const [page, setPage] = useState(1);
+    const [searchTimeout, setSearchTimeout] = useState(null);
     const baza = '/api';
 
     function prevPage() {
@@ -32,19 +33,19 @@ function Namirnice() {
     };
 
     async function tragac(pretrgo) {
-        try{
+        try {
             setUcita(true);
             setEror(null);
             const[rezsr, rezen] = await Promise.all([
                 axios.get(`${baza}/ingredients/search`, {
-                    params: {query:pretrgo, lang:'en', limit: 32, page: page}
+                    params: {query: pretrgo, lang: 'en', limit: 32, page: page}
                 }),
                 axios.get(`${baza}/ingredients/search`, {
-                    params: {query:pretrgo, lang:'sr', limit: 32, page: page}
+                    params: {query: pretrgo, lang: 'sr', limit: 32, page: page}
                 })
             ]);
             const srez = [...rezsr.data, ... rezen.data];
-            const filtrez = srez.filter((el, index, s) => index=== s.findIndex((n) => n.id ===el.id));
+            const filtrez = srez.filter((el, index, s) => index === s.findIndex((n) => n.id === el.id));
             const limited = filtrez.filter((el, index) => index < 32);
             setHrana(limited);
             setUcita(false);
@@ -58,17 +59,22 @@ function Namirnice() {
     };
 
     useEffect(() => {
-        uzmiNamirnice();
+        if (trazi.trim() === '') uzmiNamirnice();
+        else tragac(trazi);
     }, [page]);
 
     useEffect(()=> {
-        if(trazi.trim() === ''){
-            uzmiNamirnice();
-            return;
-        } else {
-            tragac(trazi);
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+            setSearchTimeout(null);
         }
-    },[trazi]);
+
+        if(trazi.trim() === '') uzmiNamirnice();
+        else setSearchTimeout(setTimeout(() => {
+            tragac(trazi);
+            setPage(1);
+        }, 200));
+    }, [trazi]);
 
 
     return (
@@ -105,7 +111,7 @@ function Namirnice() {
                 )}
                 {!ucita && !eror && hrana.lenght === 0 && trazi !== ''&& (
                     <div className="umro">
-                        <p></p>
+                        <p>test</p>
                     </div>
                 )}
             </div>   
