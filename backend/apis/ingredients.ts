@@ -100,6 +100,22 @@ router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search ingred
         res.status(400);
         res.json({ error: `Invalid language ${req.query.lang}` });
     }
+
+    let limit: number;
+    try { limit = parseInt((req.query.limit || "20").toString()); }
+    catch { 
+        res.status(400);
+        res.json({ "error": "Parameter limit must be an integer" });
+        return;
+    }
+
+    let page: number;
+    try { page = parseInt((req.query.page || "1").toString()); }
+    catch {
+        res.status(400);
+        res.json({ "error": "Parameter page must be an integer" });
+        return;
+    }
     
     // Init connection and query
     const conn = await createConnection();
@@ -115,7 +131,7 @@ router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search ingred
         if (db_values.length > 0) db_query += ' AND ';
         db_query += 'type = ?';
         db_values.push(req.query.type);
-    }
+    } db_query += ` OFFSET ${(page - 1) * limit} ROWS FETCH NEXT ${limit} ROWS ONLY;`;
 
     // Search and return results/handle errors
     try {
