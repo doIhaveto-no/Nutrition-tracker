@@ -12,8 +12,17 @@ const router: Router = express.Router();
 
 router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all foods
     const conn = await createConnection();
+
+    let limit: number;
+    try { limit = parseInt((req.query.limit || "20").toString()); }
+    catch { 
+        res.status(400);
+        res.json({ "error": "Parameter limit must be an integer" });
+        return;
+    }
+
     try {
-        const response = await conn.query(`SELECT * FROM ${TABLE_NAME};`);
+        const response = await conn.query(`SELECT * FROM ${TABLE_NAME} LIMIT ${limit};`);
         Joi.assert(response, schemas.foods);
 
         res.status(200);

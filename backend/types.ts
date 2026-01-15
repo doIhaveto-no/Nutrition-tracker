@@ -23,4 +23,8 @@ type Food = {
 
 type Foods = Array<Food>
 
-export type { Ingredient, Ingredients, Food, Foods };
+type Error = {
+    error: string
+}
+
+export type { Ingredient, Ingredients, Food, Foods, Error };
