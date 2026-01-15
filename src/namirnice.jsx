@@ -95,6 +95,7 @@ function Namirnice() {
                                     <br/>
                                     <span>Masti:</span> <strong>{namirnice.fats} g</strong>
                                 </div>
+                                <p className='text-right italic text-[slategray]'>Sve je /100g</p>
                             </div>
                            
                         ))}
