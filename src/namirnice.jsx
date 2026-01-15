@@ -5,7 +5,6 @@ function Namirnice() {
     const [hrana, setHrana] = useState([]);
     const [ucita,setUcita] =useState(true);
     const [eror, setEror] = useState(null);
-    const [searchTimeout, setSearchTimeout] = useState(null);
     const [page, setPage] = useState(2);
     const baza = '/api';
 
@@ -60,29 +59,20 @@ function Namirnice() {
 
     useEffect(() => {
         uzmiNamirnice();
-    }, []);
+    }, [page]);
 
     useEffect(()=> {
-        if(searchTimeout) {
-            clearTimeout(searchTimeout);
-        }
-        if(trazi.trim() ===''){
+        if(trazi.trim() === ''){
             uzmiNamirnice();
             return;
-        }
-        const ovid = setTimeout(() =>{
+        } else {
             tragac(trazi);
-        });
-        setSearchTimeout(ovid);
-        return() => {
-            clearTimeout(ovid);
-        };
+        }
     },[trazi]);
 
 
     return (
         <>         
-            page={page}
             <div className="namirnice">
                 <h1>Zderi brate, niko ne gleda</h1>
                 <input type="text"placeholder="Ždrao sam..." value={trazi} onChange={(e)=>setTrazi(e.target.value)}
