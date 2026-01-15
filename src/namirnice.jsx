@@ -1,54 +1,102 @@
 import { useState,useEffect } from 'react';
-import axios from 'axios'
+import axios from 'axios';
 function Namirnice() {
-   // const [trenstr, setTrenstr] = useState('pocetna'); 
     const [trazi, setTrazi] = useState('');
-    const [klik, setKlik] = useState(false);
     const [hrana, setHrana] = useState([]);
     const [ucita,setUcita] =useState(true);
     const [eror, setEror] = useState(null);
+    const [searchTimeout, setSearchTimeout] = useState(null);
+    const baza = '/api';
 
-
-    useEffect(() => {
-        uzmiNamirnice();
-    }, []);
-    //TODO zameniti listu hrana pozivom na API
-    const  uzmiNamirnice = async () => {
+    const uzmiNamirnice = async () =>{
         try{
-            const response = await axios.get('http://localhost:5173/api/ingredients');
-            setHrana(response.data.map(item =>({
-                id: item.id,
-                name_sr: item.name_sr,
-                name_en: item.name_en,
-                kcal: item.kcal,
-                protein: item.protein,
-                carbohydrates: item.carbohydrates,
-                fats: item.fats,
-                type: item.type
-            })));
+            setUcita(true);
+            setEror(null);
+            const rensponse = await axios.get(`${baza}/ingredients`);
+            setHrana(rensponse.data);
             setUcita(false);
         }
         catch(greska){
             setEror('Imamo gresku, jej');
             setUcita(false);
-            console.error(greska);
+            console.error(greska);        
         }
     };
 
-    const filterhrane = uzmiNamirnice.filter(uzmiNamirnice=> uzmiNamirnice.name_sr.toLowerCase().includes(trazi.toLowerCase()));
-    //const drstr = (str) =>{setTrenstr(str);};
-    useEffect(() =>{
-        console.log("Da li je stranica uxitana");
-    },[]);
+    const tragac = async(pretrgo) =>{
+        try{
+            setUcita(true);
+            setEror(null);
+            const[rezsr, rezen] = await Promise.all([
+                axios.get(`${baza}/ingredients/search`, {
+                    params: {query:pretrgo, lang:'en'}
+                }),
+                axios.get(`${baza}/ingredients/search`, {
+                    params: {query:pretrgo, lang:'sr'}
+                })
+            ]);
+            const srez = [...rezsr.data, ... rezen.data];
+            const filtrez = srez.filter((el, index, s) => index=== s.findIndex((n) => n.id ===el.id));
+            setHrana(filtrez);
+            setUcita(false);
+        }
+        catch(greska){
+            setEror('Imamo gresku, jej');
+            setUcita(false);
+            
+        }
+    };
+
+    useEffect(() => {
+        uzmiNamirnice();
+    }, []);
+
+    useEffect(()=> {
+        if(searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        if(trazi.trim() ===''){
+            uzmiNamirnice();
+            return;
+        }
+        const ovid = setTimeout(() =>{
+            tragac(trazi);
+        });
+        setSearchTimeout(ovid);
+        return() => {
+            clearTimeout(ovid);
+        };
+    },[trazi]);
+
+
     return (
-        <>            
-            <section className="full-screen" style={{background:'linear-gradient(#decaca,#f58488 0%,#ff1a22 100%)'}}>
+        <>         
+            <div className="namirnice">
                 <h1>Zderi brate, niko ne gleda</h1>
-                <input type="tekst"placeholder="Ždrao sam..." value={trazi} onChange={(e)=>setTrazi(e.target.value)}
+                <input type="text"placeholder="Ždrao sam..." value={trazi} onChange={(e)=>setTrazi(e.target.value)}
                     style={{width:'100%',padding:'15px',border:'none',marginBottom:'20px'}}></input>
-                {/* <p style={{textAlign:'center'}}>Pronađeno {filterhrane.lenght} namirnica</p>*/}
-                {/* ovde ide lepo da se prikazu pronadjenje namirnice */}
-            </section>
+                {!ucita && !eror && hrana.length > 0 &&(
+                    <div className ="listanamir">
+                        {hrana.map(namirnice =>(
+                            <div key={namirnice.id} className="namirnica">
+                                <h3>{namirnice.name_sr}</h3>
+                                <p className="english">{namirnice.name_en}</p>
+                                <div className ="gluposti">
+                                    <span>Kalorije:</span> <strong>{namirnice.protein}g</strong>
+                                    <span>Ugljeni hidrati:</span> <strong>{namirnice.carbohydrates}g</strong>
+                                    <span>Masti:</span> <strong>{namirnice.fats}g</strong>
+                                </div>
+                            </div>
+                           
+                        ))};
+                    </div>
+                )};
+                {!ucita && !eror && hrana.lenght === 0 && trazi !== ''&& (
+                    <div className="umro">
+                        <p></p>
+                    </div>
+                )}
+            </div>   
         </>
     );
 }
