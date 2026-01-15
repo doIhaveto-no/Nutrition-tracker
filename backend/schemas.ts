@@ -25,4 +25,8 @@ const food = Joi.object({
 
 const foods = Joi.array().items(food);
 
-export default { ingredient, ingredients, food, foods };
+const error = Joi.object({
+    error: Joi.string().required()
+});
+
+export default { ingredient, ingredients, food, foods, error };
