@@ -92,9 +92,9 @@ Vraća:
 - Greška u request body-ju: status 400, body **Error**
 - Greška pri izvršavanju: status 500, body **Error**
 
-### Pregled **Ingredient**-a
+### Pretraga **Ingredient**-a
 
-`GET http://localhost`
+`GET http://HOST:PORT/api/ingredients/search`
 
 Query parametri:
 
@@ -103,6 +103,19 @@ Query parametri:
 - query: string - upit/tekst koji se traži
 - lang: string - u kom jeziku se traži (opcionalan, default sr, moguće vrednosti sr i en)
 - type: string - vrsta ingredient-a koja se traži (opcionalan, moguće vrednosti fruit, vegetable i animal_product)
+
+### Hrane koje sadrže **Ingredient**
+
+`GET http://HOST:PORT/api/ingredients/:id/foods?limit=20&page=1`
+
+Path parametri:
+
+- id: integer - id koji se traži
+
+Query parametri:
+
+- limit: integer - koliko elemenata da vrati (opcionalan, default 20)
+- page: integer - koju "stranicu" da vrati (n-tih limit ingredienta) (opcionalan, default 1);
 
 ## Foods API
 

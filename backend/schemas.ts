@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 const ingredient = Joi.object({
-    id: Joi.number().integer().positive().optional(),
+    id: Joi.number().integer().min(1).optional(),
     name_sr: Joi.string().max(24).required(),
     name_en: Joi.string().max(24).required(),
     kcal: Joi.number().positive().unit('kcal').required(),
@@ -14,7 +14,7 @@ const ingredient = Joi.object({
 const ingredients = Joi.array().items(ingredient);
 
 const food = Joi.object({
-    id: Joi.number().integer().positive().optional(),
+    id: Joi.number().integer().min(1).optional(),
     name_sr: Joi.string().max(24).required(),
     name_en: Joi.string().max(24).required(),
     kcal: Joi.number().positive().unit('kcal').required(),
@@ -25,8 +25,16 @@ const food = Joi.object({
 
 const foods = Joi.array().items(food);
 
+const foodIngredient = Joi.object({
+    food_id: Joi.number().integer().min(1).optional(),
+    ingredient_id: Joi.number().integer().min(1).optional(),
+    grams: Joi.number().min(0).required()
+}).or('food_id', 'ingredient_id');
+
+const foodIngredients = Joi.array().items(foodIngredient);
+
 const error = Joi.object({
     error: Joi.string().required()
 });
 
-export default { ingredient, ingredients, food, foods, error };
+export default { ingredient, ingredients, food, foods, foodIngredient, foodIngredients, error };

@@ -2,31 +2,24 @@ import express from "express";
 import { type Router } from "express";
 import schemas from "../schemas.ts";
 import Joi from "joi";
-import { type Food, type Foods } from "../types.ts";
-import { createConnection } from "./db_utils.ts";
-
+import { type FoodIngredient, type FoodIngredients, type Food, type Foods } from "../types.ts";
+import { createConnection } from "./dbUtils.ts";
+import { validateId, validateLimit, validatePage } from "./apiUtils.ts";
 
 const TABLE_NAME = 'foods';
 
 const router: Router = express.Router();
 
+// UPOZORENJE - COGNITOHAZARD
+// Najveće kršenje DRY ikada ispod
 router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all foods
-    let limit: number;
-    try { limit = parseInt((req.query.limit || "20").toString()); }
-    catch { 
-        res.status(400);
-        res.json({ "error": "Parameter limit must be an integer" });
-        return;
-    }
+    const limit = validateLimit(req, res);
+    if (limit == -1) return;
 
-    let page: number;
-    try { page = parseInt((req.query.page || "1").toString()); }
-    catch {
-        res.status(400);
-        res.json({ "error": "Parameter page must be an integer" });
-        return;
-    }
+    const page = validatePage(req, res);
+    if (page == -1) return;
     
+
     const conn = await createConnection();
     try {
         const response = await conn.query(`SELECT * FROM ${TABLE_NAME} OFFSET ${(page - 1) * limit} ROWS FETCH NEXT ${limit} ROWS ONLY;`);
@@ -53,10 +46,11 @@ router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all foods
     try { foods = Joi.attempt(insert, schemas.foods); }
     catch { foods = null; }
 
+
     // Send query and return result/handle errors
     const conn = await createConnection();
     try {
-        const query = `INSERT INTO ${TABLE_NAME} (name_sr, name_en, kcal, protein, carbohydrates, fats) VALUES (?, ?, ?, ?, ?, ?) RETURNING *;`;
+        const query = `INSERT INTO ${TABLE_NAME} (name_sr, name_en, kcal, protein, carbohydrates, fats, type) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING *;`;
         const dbValues: Array<Array<string | number>> = [];
 
         if (food) {
@@ -101,22 +95,13 @@ router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search food b
         res.json({ error: `Invalid language ${req.query.lang}` });
     }
 
-    let limit: number;
-    try { limit = parseInt((req.query.limit || "20").toString()); }
-    catch { 
-        res.status(400);
-        res.json({ "error": "Parameter limit must be an integer" });
-        return;
-    }
+    const limit = validateLimit(req, res);
+    if (limit == -1) return;
 
-    let page: number;
-    try { page = parseInt((req.query.page || "1").toString()); }
-    catch {
-        res.status(400);
-        res.json({ "error": "Parameter page must be an integer" });
-        return;
-    }
+    const page = validatePage(req, res);
+    if (page == -1) return;
     
+
     // Init connection and query
     const conn = await createConnection();
     let db_query = `SELECT * FROM ${TABLE_NAME} WHERE `;
@@ -132,6 +117,7 @@ router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search food b
         db_query += 'type = ?';
         db_values.push(req.query.type);
     } db_query += ` OFFSET ${(page - 1) * limit} ROWS FETCH NEXT ${limit} ROWS ONLY;`;
+
 
     // Search and return results/handle errors
     try {
@@ -150,14 +136,9 @@ router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search food b
 });
 
 router.route(`/${TABLE_NAME}/:id`).get(async (req, res) => {
-    let id: number;
-    try {
-        id = parseInt(req.params.id);
-    } catch {
-        res.status(400);
-        res.json({ error: "Id must be an integer" });
-        return;
-    }
+    const id = validateId(req, res);
+    if (id == -1) return;
+
 
     const conn = await createConnection();
     try {
@@ -178,14 +159,9 @@ router.route(`/${TABLE_NAME}/:id`).get(async (req, res) => {
         conn.end();
     }
 }).put(async (req, res) => {
-    let id: number;
-    try {
-        id = parseInt(req.params.id);
-    } catch {
-        res.status(400);
-        res.json({ error: "Id must be an integer" });
-        return;
-    }
+    const id = validateId(req, res);
+    if (id == -1) return;
+
 
     const conn = await createConnection();
     try {
@@ -220,13 +196,9 @@ router.route(`/${TABLE_NAME}/:id`).get(async (req, res) => {
         conn.end();
     }
 }).delete(async (req, res) => {
-    let id: number;
-    try { id = parseInt(req.params.id); }
-    catch {
-        res.status(400);
-        res.json({ error: "Id must be an integer" });
-        return;
-    }
+    const id = validateId(req, res);
+    if (id == -1) return;
+
 
     const conn = await createConnection();
     try {
@@ -246,6 +218,40 @@ router.route(`/${TABLE_NAME}/:id`).get(async (req, res) => {
         console.error(err);
         res.status(500);
         res.json({ error: "The server couldn't delete food or returned an invalid response"});
+    } finally {
+        conn.end();
+    }
+});
+
+router.route(`/${TABLE_NAME}/:id/ingredients`).get(async (req, res) => {
+    const id = validateId(req, res);
+    if (id == -1) return;
+
+    const limit = validateLimit(req, res);
+    if (limit == -1) return;
+
+    const page = validatePage(req, res);
+    if (page == -1) return;
+
+
+    const conn = await createConnection();
+    try {
+        const response_check: Foods = await conn.query(`SELECT * FROM ${TABLE_NAME} WHERE id=${id}`);
+        Joi.assert(response_check, schemas.foods);
+        if (response_check.length > 0) {
+            const response: FoodIngredients = await conn.query(`SELECT * FROM food_ingredients WHERE food_id=${id}`);
+            Joi.assert(response, schemas.foods);
+
+            res.status(200);
+            res.json(response);
+        } else {
+            res.status(404);
+            res.json({ error: "Requested id does not exist" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500);
+        res.json({ error: "The server couldn't get foods with food or returned an invalid response"});
     } finally {
         conn.end();
     }
