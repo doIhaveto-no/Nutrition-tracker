@@ -6,10 +6,18 @@ function Namirnice() {
     const [ucita,setUcita] =useState(true);
     const [eror, setEror] = useState(null);
     const [searchTimeout, setSearchTimeout] = useState(null);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(2);
     const baza = '/api';
 
-    const uzmiNamirnice = async () =>{
+    function prevPage() {
+        if (page > 1) setPage(page - 1);
+    }
+
+    function nextPage() {
+        setPage(page + 1);
+    }
+
+    async function uzmiNamirnice() {
         try{
             setUcita(true);
             setEror(null);
@@ -24,7 +32,7 @@ function Namirnice() {
         }
     };
 
-    const tragac = async(pretrgo) =>{
+    async function tragac(pretrgo) {
         try{
             setUcita(true);
             setEror(null);
@@ -74,11 +82,15 @@ function Namirnice() {
 
     return (
         <>         
+            page={page}
             <div className="namirnice">
                 <h1>Zderi brate, niko ne gleda</h1>
                 <input type="text"placeholder="Ždrao sam..." value={trazi} onChange={(e)=>setTrazi(e.target.value)}
                     style={{width:'100%',padding:'15px',border:'none',marginBottom:'20px'}}/>
-                <div><button>left</button><button>right</button></div>
+                <div className='flex justify-center space-x-5'>
+                    <button className='cursor-pointer bg-[cornsilk] px-2 py-1 rounded-md' onClick={prevPage}>&lt;</button>
+                    <button className='cursor-pointer bg-[cornsilk] px-2 py-1 rounded-md' onClick={nextPage}>&gt;</button>
+                </div>
                 {!ucita && !eror && hrana.length > 0 &&(
                     <div className ="listanamir">
                         {hrana.map(namirnice =>(
