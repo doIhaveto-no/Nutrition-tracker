@@ -1,16 +1,109 @@
-# React + Vite
+# API
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sve vrste navedene (boldovane) su definisane u `/backend/types.ts` ili detaljnije u `/backend/schemas.ts`
 
-Currently, two official plugins are available:
+U URL-u `HOST` bi trebalo da bude localhost, a `PORT` 5173
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Path parametri se nalaze u pathu URL-a i pišu se kao /:param/  
+Dve tačke NE TREBAJU da se dodaju, samo služe u dokumentaciji da označe path parametar;
+Ceo deo ':param' treba zameniti vrednošću
 
-## React Compiler
+Query parametri se nalaze posle znaka pitanja u URL-u u formatu param=value  
+Query parametri su odvojeni ampersandima ("&")  
+Samo 'value' treba zameniti vrednošću
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Ingredients API
 
-## Expanding the ESLint configuration
+### Get all ingredients
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+`GET http://HOST:PORT/api/ingredients?limit=20?page=1`
+
+Query parametri:
+
+- limit: integer - koliko elemenata da vrati (opcionalan, default 20)
+- page: integer - koju "stranicu" da vrati (n-tih limit ingredienta) (opcionalan, default 1);
+
+Vraća:
+
+- Uspešno izvršavanje: status 200, body **Ingredients**
+- Limit/Page nije integer: status 400, body **Error**
+- Greška pri izvršavanju: status 500, body **Error**
+
+### Dodaj **Ingredient**
+
+`POST http://HOST:PORT/api/ingredients`
+
+Dodaje **Ingredient** ili **Ingredients** u databasu i vraća dodato
+
+Request body: **Ingredient** ili **Ingredients**
+
+Vraća:
+
+- Uspešno izvršavanje: status 201, body **Ingredient**/**Ingredients** koji je/su dodati
+- Greška u request body-ju: status 400, body **Error**
+- Greška pri izvršavanju: status 500, body **Error**
+
+### Get po ID-u
+
+`GET http://HOST:PORT/api/ingredients/:id/`
+
+Path parametri:
+
+- id: integer - id koji se traži
+
+Vraća:
+
+- Uspešno izvršavanje: status 200, body **Ingredient** sa traženim Id-om
+- ID nije integer: status 400, body **Error**
+- ID ne postoji: status 404, body **Error**
+- Greška pri izvršavanju: status 500, body **Error**
+
+### Zameni **Ingredient** po ID-u
+
+`PUT http://HOST:PORT/api/ingredients/:id/`
+
+Zamenjuje **Ingredient** sa id-om i vraća novi i stari
+
+Request body: **Ingredient**
+
+Path parametri:
+
+- id: integer - id koji se traži
+
+Vraća:
+
+- Uspešno izvršavanje: status 201, body **Ingredients** gde je prvi element stari a drugi novi **Ingredient**
+- Greška u request body-ju: status 400, body **Error**
+- Greška pri izvršavanju: status 500, body **Error**
+
+### Obriši **Ingredient** po ID-u
+
+`DELETE http://HOST:PORT/api/ingredients/:id/`
+
+Briše **Ingredient** sa id-om i vraća ga
+
+Path parametri:
+
+- id: integer - id koji se traži
+
+Vraća:
+
+- Uspešno izvršavanje: status 201, body **Ingredient** koji je izbrisan
+- Greška u request body-ju: status 400, body **Error**
+- Greška pri izvršavanju: status 500, body **Error**
+
+### Pregled **Ingredient**-a
+
+`GET http://localhost`
+
+Query parametri:
+
+- limit: integer - koliko elemenata da vrati (opcionalan, default 20)
+- page: integer - koju "stranicu" da vrati (n-tih limit ingredienta) (opcionalan, default 1);
+- query: string - upit/tekst koji se traži
+- lang: string - u kom jeziku se traži (opcionalan, default sr, moguće vrednosti sr i en)
+- type: string - vrsta ingredient-a koja se traži (opcionalan, moguće vrednosti fruit, vegetable i animal_product)
+
+## Foods API
+
+Isti kao Ingredients API, osim što tamo gde je **Ingredient** je **Food** i obrnuto
