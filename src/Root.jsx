@@ -5,11 +5,14 @@ import './Root.css';
 function Root() {
     return (
         <>
+            <div className="molimte">
             <Header/>
-            <Outlet/>
+            <div className="glavno">
+            <Outlet/></div>
             <footer className="Budinapodu">
                 <p style={{fontSize:'1rem'}}>Nutrition tracker - Pingvini sa madagaskara</p>
             </footer>
+            </div>
         </>
     );
 }
