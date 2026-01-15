@@ -34,6 +34,7 @@ export default defineConfig([
             'prefer-const': ['error'],
             'indent': ['error', 4],
             'semi': 'error',
+            'react-hooks/exhaustive-deps': 'off'
         },
     },
     {
