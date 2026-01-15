@@ -4,7 +4,7 @@ function Header() {
     }
 
     return (
-        <header style={{background:'#fcf5f5', padding: '15px 0', width: '100%', top:'0', zIndex:'1000', display:'flex', alignItems:'center'}}>
+        <header style={{background:'#fcb59f', padding: '15px 0', width: '100%', top:'0', zIndex:'1000', display:'flex', alignItems:'center'}}>
 
     <a href="home"><img src="/name.png" alt="name png" style={{height:'40px', objectFit:'contain', marginRight:'20px', marginLeft:'10px'}} /></a>
   
