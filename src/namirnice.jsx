@@ -82,15 +82,19 @@ function Namirnice() {
                                 <h3>{namirnice.name_sr}</h3>
                                 <p className="english">{namirnice.name_en}</p>
                                 <div className ="gluposti">
-                                    <span>Kalorije:</span> <strong>{namirnice.protein}g</strong>
+                                    <span>Kalorije:</span> <strong>{namirnice.kcal}</strong>
+                                    <br/>
+                                    <span>Proteini:</span> <strong>{namirnice.protein}g</strong>
+                                    <br/>
                                     <span>Ugljeni hidrati:</span> <strong>{namirnice.carbohydrates}g</strong>
+                                    <br/>
                                     <span>Masti:</span> <strong>{namirnice.fats}g</strong>
                                 </div>
                             </div>
                            
-                        ))};
+                        ))}
                     </div>
-                )};
+                )}
                 {!ucita && !eror && hrana.lenght === 0 && trazi !== ''&& (
                     <div className="umro">
                         <p></p>
