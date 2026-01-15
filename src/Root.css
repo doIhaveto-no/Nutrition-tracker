@@ -7,7 +7,14 @@
 h1{
 text-align: center;
 }
-
+.Budinapodu{
+  background:'#decaca';
+  color:'#292121';
+  padding:40px 20px; 
+  text-align: center;
+  margin-top:'auto';
+  z-index: 1000;
+}
 .namirnice{
   background-image: url("/public/background.png"); 
   background-size: cover;
