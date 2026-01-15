@@ -203,6 +203,36 @@ router.route(`/${TABLE_NAME}/:id`).get(async (req, res) => {
     } finally {
         conn.end();
     }
+}).delete(async (req, res) => {
+    let id: number;
+    try { id = parseInt(req.params.id); }
+    catch {
+        res.status(400);
+        res.json({ error: "Id must be an integer" });
+        return;
+    }
+
+    const conn = await createConnection();
+    try {
+        const response_check: Ingredients = await conn.query(`SELECT * FROM ${TABLE_NAME} WHERE id=${id}`);
+        Joi.assert(response_check, schemas.ingredients);
+        if (response_check.length > 0) {
+            const response: Ingredients = await conn.query(`DELETE FROM ${TABLE_NAME} WHERE id=${id} RETURNING *`);
+            Joi.assert(response, schemas.ingredients);
+
+            res.status(200);
+            res.json(response);
+        } else {
+            res.status(404);
+            res.json({ error: "Requested id does not exist" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500);
+        res.json({ error: "The server couldn't delete ingredient or returned an invalid response"});
+    } finally {
+        conn.end();
+    }
 });
 
 export default router;
