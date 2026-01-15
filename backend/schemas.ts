@@ -8,7 +8,7 @@ const ingredient = Joi.object({
     protein: Joi.number().min(0).unit('g').required(),
     carbohydrates: Joi.number().min(0).unit('g').required(),
     fats: Joi.number().min(0).unit('g').required(),
-    type: Joi.string().valid('fruit', 'vegetable', 'animal_product').insensitive().required()
+    type: Joi.string().valid('fruit', 'vegetable', 'animal product').insensitive().required()
 });
 
 const ingredients = Joi.array().items(ingredient);

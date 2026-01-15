@@ -79,11 +79,12 @@ function Namirnice() {
                     <div className ="listanamir">
                         {hrana.map(namirnice =>(
                             <div key={namirnice.id} className="namirnica">
-                                <h3>{namirnice.name_sr}</h3>
-                                <p className="english">{namirnice.name_en}</p>
+                                <div className="grid grid-flow-col justify-between">
+                                    <h3 className=''>{namirnice.name_sr}</h3>
+                                    <h3 className='english'>{namirnice.name_en}</h3>
+                                    <strong className='row-span-2 col-start-2 text-3xl'>{namirnice.kcal}kcal</strong>
+                                </div>
                                 <div className ="gluposti">
-                                    <span>Kalorije:</span> <strong>{namirnice.kcal}kcal</strong>
-                                    <br/>
                                     <span>Proteini:</span> <strong>{namirnice.protein}g</strong>
                                     <br/>
                                     <span>Ugljeni hidrati:</span> <strong>{namirnice.carbohydrates}g</strong>
