@@ -82,7 +82,7 @@ function Namirnice() {
                                 <h3>{namirnice.name_sr}</h3>
                                 <p className="english">{namirnice.name_en}</p>
                                 <div className ="gluposti">
-                                    <span>Kalorije:</span> <strong>{namirnice.kcal}</strong>
+                                    <span>Kalorije:</span> <strong>{namirnice.kcal}kcal</strong>
                                     <br/>
                                     <span>Proteini:</span> <strong>{namirnice.protein}g</strong>
                                     <br/>
