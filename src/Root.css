@@ -7,9 +7,7 @@
 h1{
 text-align: center;
 }
-p{
-text-align: center;
-}
+
 .namirnice{
     background-image: url("/public/background.png"); 
                     background-size: cover;
