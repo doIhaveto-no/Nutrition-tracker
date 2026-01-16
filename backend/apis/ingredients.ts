@@ -4,7 +4,7 @@ import schemas from "../schemas.ts";
 import Joi from "joi";
 import { type FoodIngredient, type FoodIngredients, type Ingredient, type Ingredients } from "../types.ts";
 import { createConnection } from "./dbUtils.ts";
-import { validateId, validateLimit, validatePage } from "./apiUtils.ts";
+import { validateId, validateLimit, validateOrder, validatePage, validateSort } from "./apiUtils.ts";
 
 
 const TABLE_NAME = 'ingredients';
@@ -101,6 +101,12 @@ router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search ingred
 
     const page = validatePage(req, res);
     if (page == -1) return;
+
+    const sort = validateSort(req, res, true);
+    if (sort == '') return;
+
+    const order = validateOrder(req, res);
+    if (order == '') return;
     
 
     // Init connection and query
@@ -117,7 +123,7 @@ router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search ingred
         if (db_values.length > 0) db_query += ' AND ';
         db_query += 'type = ?';
         db_values.push(req.query.type);
-    } db_query += ` OFFSET ${(page - 1) * limit} ROWS FETCH NEXT ${limit} ROWS ONLY;`;
+    } db_query += ` ORDER BY ${conn.escapeId(sort)} ${order.toUpperCase()} OFFSET ${(page - 1) * limit} ROWS FETCH NEXT ${limit} ROWS ONLY;`;
 
 
     // Search and return results/handle errors

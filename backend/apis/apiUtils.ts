@@ -39,4 +39,20 @@ function validatePage(req: Request, res: Response): number {
     }
 }
 
-export { validateId, validateLimit, validatePage };
+function validateSort(req: Request, res: Response, allowType: boolean): string {
+    const sort = (req.query.sort || "id") as string;
+    if (sort in ['id', 'name_sr', 'name_en', 'kcal', 'protein', 'carbohydrates', 'fats'] || (allowType && sort == 'type'))
+        return sort;
+    else
+        return '';
+}
+
+function validateOrder(req: Request, res: Response) {
+    const ord = (res.query.sort || "asc") as string;
+    if (ord == 'asc' || ord == 'desc')
+        return ord;
+    else
+        return '';
+}
+
+export { validateId, validateLimit, validatePage, validateSort, validateOrder };
