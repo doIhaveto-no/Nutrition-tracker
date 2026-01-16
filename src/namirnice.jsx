@@ -107,13 +107,7 @@ function Namirnice() {
             setPage(1);
         }, 200));
     }, [trazi, type, sort, order]);
-
-    useEffect(() => {
-        const div = document.createElement("div");
-        div.innerText = "testtest1234";
-        document.getElementsByTagName("header")[0].appendChild(div);
-    }, []);
-
+    
     return (
         <>         
             <div className="namirnice">
