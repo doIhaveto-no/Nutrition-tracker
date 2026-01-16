@@ -1,11 +1,14 @@
 import { useState,useEffect } from 'react';
 import axios from 'axios';
+import "@tailwindplus/elements";
+
 function Namirnice() {
     const [trazi, setTrazi] = useState('');
     const [hrana, setHrana] = useState([]);
-    const [ucita,setUcita] =useState(true);
+    const [ucita,setUcita] = useState(true);
     const [eror, setEror] = useState(null);
     const [page, setPage] = useState(1);
+    const [type, setType] = useState(null);
     const [searchTimeout, setSearchTimeout] = useState(null);
     const baza = '/api';
 
@@ -32,16 +35,23 @@ function Namirnice() {
         }
     };
 
+    function createSearchParams(lang) {
+        const obj = { lang: lang, limit: 32, page: page };
+        if (trazi.trim() !== '') obj.query = trazi;
+        if (type) obj.type = type;
+        return obj;
+    }
+
     async function tragac(pretrgo) {
         try {
             setUcita(true);
             setEror(null);
             const[rezsr, rezen] = await Promise.all([
                 axios.get(`${baza}/ingredients/search`, {
-                    params: {query: pretrgo, lang: 'en', limit: 32, page: page}
+                    params: createSearchParams('en')
                 }),
                 axios.get(`${baza}/ingredients/search`, {
-                    params: {query: pretrgo, lang: 'sr', limit: 32, page: page}
+                    params: createSearchParams('sr')
                 })
             ]);
             const srez = [...rezsr.data, ... rezen.data];
@@ -54,7 +64,6 @@ function Namirnice() {
             console.error(greska);
             setEror('Imamo gresku, jej');
             setUcita(false);
-            
         }
     };
 
@@ -63,30 +72,82 @@ function Namirnice() {
         else tragac(trazi);
     }, [page]);
 
+    useEffect(() => {
+        if (type) {
+            if (document.getElementById('types-reset')) return;
+            const removeTypeFilter = document.createElement('button');
+            removeTypeFilter.textContent = "Remove filter";
+            removeTypeFilter.id = 'types-reset';
+            removeTypeFilter.classList.add("italic", "text-[slategray]", "w-full", "text-right");
+            removeTypeFilter.onclick = () => {
+                document.getElementById(type).checked = false;
+                setType(null);
+            };
+            document.getElementById('types-menu').appendChild(removeTypeFilter);
+        } else {
+            const removeTypeFilter = document.getElementById('types-reset');
+            if (removeTypeFilter)
+                document.getElementById('types-menu').removeChild(document.getElementById('types-reset'));
+        }
+    }, [type]);
+
     useEffect(()=> {
         if (searchTimeout) {
             clearTimeout(searchTimeout);
             setSearchTimeout(null);
         }
 
-        if(trazi.trim() === '') uzmiNamirnice();
+        if(trazi.trim() === '' && !type) uzmiNamirnice();
         else setSearchTimeout(setTimeout(() => {
             tragac(trazi);
             setPage(1);
         }, 200));
-    }, [trazi]);
+    }, [trazi, type]);
 
+    useEffect(() => {
+        const div = document.createElement("div");
+        div.innerText = "testtest1234";
+        document.getElementsByTagName("header")[0].appendChild(div);
+    }, []);
 
     return (
         <>         
             <div className="namirnice">
+                <div>
+                    
+                </div>
                 <h1>Zderi brate, niko ne gleda</h1>
-                <input type="text"placeholder="Ždrao sam..." value={trazi} onChange={(e)=>setTrazi(e.target.value)}
-                    style={{width:'100%',padding:'15px',border:'none',marginBottom:'20px'}}/>
+                <div className='flex flex-row w-full border-black border-2 justify-end space-x-5 pr-2 rounded-lg'>
+                    <input type="text" placeholder="Ždrao sam..." value={trazi} onChange={(e)=>setTrazi(e.target.value)} className='w-full h-10 p-2 pl-4 rounded-lg'/>
+
+                    <el-dropdown className='h-10'>
+                        <button className='h-10 cursor-pointer'> <img src="/filter.svg" alt="filter" className='h-full'/> </button>
+                        <el-menu popover anchor="bottom end" className="origin-top-right bg-[cornsilk] rounded-lg border-2">
+                            <div id='types-menu' className='inline-block p-3.5 space-y-2'>
+                                <label className="block">
+                                    <input type="radio" name="type" id="fruit" onClick={element => setType(element.target.id)}/>
+                                    Fruits
+                                </label>
+                                <label className="block">
+                                    <input type="radio" name="type" id="vegetable" onClick={element => setType(element.target.id)}/>
+                                    Vegetables
+                                </label>
+                                <label className="block">
+                                    <input type="radio" name="type" id="animal product" onClick={element => setType(element.target.id)}/>
+                                    Animal Products
+                                </label>
+                            </div>
+                        </el-menu>
+                    </el-dropdown>
+
+                    <img src="/sort.svg" alt="sort" className='h-10 cursor-pointer'/>
+                </div>
+
                 <div className='flex justify-center space-x-5'>
                     <button className='cursor-pointer bg-[cornsilk] px-2 py-1 rounded-md' onClick={prevPage}>&lt;</button>
                     <button className='cursor-pointer bg-[cornsilk] px-2 py-1 rounded-md' onClick={nextPage}>&gt;</button>
                 </div>
+
                 {!ucita && !eror && hrana.length > 0 &&(
                     <div className ="listanamir">
                         {hrana.map(namirnice =>(
