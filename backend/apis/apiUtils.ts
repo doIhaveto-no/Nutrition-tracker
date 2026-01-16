@@ -40,19 +40,25 @@ function validatePage(req: Request, res: Response): number {
 }
 
 function validateSort(req: Request, res: Response, allowType: boolean): string {
-    const sort = (req.query.sort || "id") as string;
-    if (sort in ['id', 'name_sr', 'name_en', 'kcal', 'protein', 'carbohydrates', 'fats'] || (allowType && sort == 'type'))
+    const sort = (req.query.sort || "id").toString();
+    if (['id', 'name_sr', 'name_en', 'kcal', 'protein', 'carbohydrates', 'fats'].includes(sort) || (allowType && sort == 'type'))
         return sort;
-    else
+    else {
+        res.status(400);
+        res.json({ "error": "Parameter sort is incorrect" });
         return '';
+    }
 }
 
 function validateOrder(req: Request, res: Response) {
-    const ord = (res.query.sort || "asc") as string;
+    const ord = (req.query.order || "asc") as string;
     if (ord == 'asc' || ord == 'desc')
         return ord;
-    else
+    else {
+        res.status(400);
+        res.json({ "error": "Parameter order is incorrect" });
         return '';
+    }
 }
 
 export { validateId, validateLimit, validatePage, validateSort, validateOrder };

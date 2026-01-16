@@ -96,17 +96,23 @@ router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search ingred
         res.json({ error: `Invalid language ${req.query.lang}` });
     }
 
+    console.log("passed search param validation");
+
     const limit = validateLimit(req, res);
     if (limit == -1) return;
+    console.log(limit);
 
     const page = validatePage(req, res);
     if (page == -1) return;
+    console.log(page);
 
     const sort = validateSort(req, res, true);
     if (sort == '') return;
+    console.log(sort);
 
     const order = validateOrder(req, res);
     if (order == '') return;
+    console.log(order);
     
 
     // Init connection and query

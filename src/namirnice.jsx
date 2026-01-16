@@ -9,6 +9,8 @@ function Namirnice() {
     const [eror, setEror] = useState(null);
     const [page, setPage] = useState(1);
     const [type, setType] = useState(null);
+    const [sort, setSort] = useState('id');
+    const [order, setOrder] = useState('asc');
     const [searchTimeout, setSearchTimeout] = useState(null);
     const baza = '/api';
 
@@ -39,6 +41,8 @@ function Namirnice() {
         const obj = { lang: lang, limit: 32, page: page };
         if (trazi.trim() !== '') obj.query = trazi;
         if (type) obj.type = type;
+        if (sort) obj.sort = sort;
+        if (order) obj.order = order; 
         return obj;
     }
 
@@ -102,7 +106,7 @@ function Namirnice() {
             tragac(trazi);
             setPage(1);
         }, 200));
-    }, [trazi, type]);
+    }, [trazi, type, sort, order]);
 
     useEffect(() => {
         const div = document.createElement("div");
@@ -121,18 +125,18 @@ function Namirnice() {
                     <input type="text" placeholder="Ždrao sam..." value={trazi} onChange={(e)=>setTrazi(e.target.value)} className='w-full h-10 p-2 pl-4 rounded-lg'/>
 
                     <el-dropdown className='h-10'>
-                        <button className='h-10 cursor-pointer'> <img src="/filter.svg" alt="filter" className='h-full'/> </button>
-                        <el-menu popover anchor="bottom end" className="origin-top-right bg-[cornsilk] rounded-lg border-2">
+                        <button className='h-full cursor-pointer'><img src="/filter.svg" alt="filter" className='h-full'/></button>
+                        <el-menu anchor="bottom end" popover className="origin-top-right bg-[cornsilk] rounded-lg border-2">
                             <div id='types-menu' className='inline-block p-3.5 space-y-2'>
-                                <label className="block">
+                                <label htmlFor='fruit' className="block">
                                     <input type="radio" name="type" id="fruit" onClick={element => setType(element.target.id)}/>
                                     Fruits
                                 </label>
-                                <label className="block">
+                                <label htmlFor='vegetable' className="block">
                                     <input type="radio" name="type" id="vegetable" onClick={element => setType(element.target.id)}/>
                                     Vegetables
                                 </label>
-                                <label className="block">
+                                <label htmlFor='animal product' className="block">
                                     <input type="radio" name="type" id="animal product" onClick={element => setType(element.target.id)}/>
                                     Animal Products
                                 </label>
@@ -140,7 +144,51 @@ function Namirnice() {
                         </el-menu>
                     </el-dropdown>
 
-                    <img src="/sort.svg" alt="sort" className='h-10 cursor-pointer'/>
+                    <el-dropdown className='h-10 inline-block'>
+                        <button className='h-full cursor-pointer'><img src="/sort.svg" alt="sort" className='h-full'/></button>
+                        <el-menu anchor="bottom end" popover className="origin-top-right bg-[cornsilk] rounded-lg border-2 divide-y-2">
+                            <div>
+                                <label htmlFor='sort-id' className='block'>
+                                    <input type="radio" name="sort" id="sort-id" onClick={event => setSort(event.target.id.split('-')[1])}/>
+                                    Id
+                                </label>
+                                <label htmlFor='sort-name_sr' className='block'>
+                                    <input type="radio" name="sort" id="sort-name_sr" onClick={event => setSort(event.target.id.split('-')[1])}/>
+                                    Name (SR)
+                                </label>
+                                <label htmlFor='sort-name_end' className='block'>
+                                    <input type="radio" name="sort" id="sort-name_en" onClick={event => setSort(event.target.id.split('-')[1])}/>
+                                    Name (EN)
+                                </label>
+                                <label htmlFor='sort-kcal' className='block'>
+                                    <input type="radio" name="sort" id="sort-kcal" onClick={event => setSort(event.target.id.split('-')[1])}/>
+                                    kcal
+                                </label>
+                                <label htmlFor='sort-protein' className='block'>
+                                    <input type="radio" name="sort" id="sort-protein" onClick={event => setSort(event.target.id.split('-')[1])}/>
+                                    Protein
+                                </label>
+                                <label htmlFor='sort-carbohydrates' className='block'>
+                                    <input type="radio" name="sort" id="sort-carbohydrates" onClick={event => setSort(event.target.id.split('-')[1])}/>
+                                    Carbohydrates
+                                </label>
+                                <label htmlFor='sort-fats' className='block'>
+                                    <input type="radio" name="sort" id="sort-fats" onClick={event => setSort(event.target.id.split('-')[1])}/>
+                                    Fats
+                                </label>
+                            </div>
+                            <div>
+                                <label htmlFor='sort-asc' className='block'>
+                                    <input type="radio" name="order" id="sort-asc" onClick={event => setOrder(event.target.id.split('-')[1])}/>
+                                    Ascending
+                                </label>
+                                <label htmlFor='sort-desc' className='block'>
+                                    <input type="radio" name="order" id="sort-desc" onClick={event => setOrder(event.target.id.split('-')[1])}/>
+                                    Descending
+                                </label>
+                            </div>
+                        </el-menu>
+                    </el-dropdown>
                 </div>
 
                 <div className='flex justify-center space-x-5'>
