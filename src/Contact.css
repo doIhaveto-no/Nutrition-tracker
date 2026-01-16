@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+.form {
+    width: 340px;
+    height: 500px;
+    background: #e6e6e6;
+    border-radius: 8px;
+    box-shadow: 0 0 40px -10px #000;
+    margin: calc(45vh - 220px) auto;
+    padding: 20px 30px;
+    max-width: calc(100vw - 40px);
+    box-sizing: border-box;
+    position: relative;
+}
+
+h2 {
+    margin: 10px 0;
+    padding-bottom: 10px;
+    width: 180px;
+    color: #fcb59f;
+    border-bottom: 3px solid #fcb59f;
+    text-align: center;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    background: none;
+    outline: none;
+    border: 0;
+    transition: all 0.3s;
+    border-bottom: 2px solid #bebed2;
+}
+
+
+input:focus,
+textarea:focus {
+    border-bottom: 2px solid #78788c;
+}
+
+
+p[type]::before {
+    content: attr(type);
+    display: block;
+    margin: 28px 0 0;
+    font-size: 14px;
+    color: #5a5a5a;
+}
+
+button {
+    float: right;
+    padding: 8px 12px;
+    margin: 8px 0 0;
+    border: 2px solid #000000;
+    background: none;
+    color: #000000;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 4px;
+}
+
+button:hover {
+    background: #fcb59f;
+    color: #000000;
+}
+
+form div {
+    position: absolute;
+    bottom: -35px;
+    right: -25px;
+    background: #fcb59f;
+    color: #000000;
+    width: 300px;
+    padding: 16px 4px 16px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    box-shadow: 10px 10px 40px -14px #000;
+}
+
+span {
+    margin: 0 5px 0 15px;
+}
