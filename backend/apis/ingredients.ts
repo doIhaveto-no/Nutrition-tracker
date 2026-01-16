@@ -22,11 +22,9 @@ router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all ingredients
     
     const sort = validateSort(req, res, true);
     if (sort == '') return;
-    console.log(sort);
 
     const order = validateOrder(req, res);
     if (order == '') return;
-    console.log(order);
 
     const conn = await createConnection();
     try {
@@ -92,6 +90,25 @@ router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all ingredients
     }
 });
 
+router.route(`/${TABLE_NAME}/pages`).get(async (req, res) => { // Get all ingredients
+    const limit = validateLimit(req, res);
+    if (limit == -1) return;
+
+    const conn = await createConnection();
+    try {
+        const response: Array<object> = await conn.query(`SELECT COUNT(id)/${limit} FROM ${TABLE_NAME};`);;
+
+        res.status(200);
+        res.json(Math.ceil(Object.values(response[0])[0]));
+    } catch (err) {
+        console.error(err);
+        res.status(500);
+        res.json({ error: "The database returned an invalid reponse" });
+    } finally {
+        conn.end();
+    }
+});
+
 router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search ingredient by name or type
     // Validate parameters
     if (!(req.query.query || req.query.type)) {
@@ -103,23 +120,17 @@ router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search ingred
         res.json({ error: `Invalid language ${req.query.lang}` });
     }
 
-    console.log("passed search param validation");
-
     const limit = validateLimit(req, res);
     if (limit == -1) return;
-    console.log(limit);
 
     const page = validatePage(req, res);
     if (page == -1) return;
-    console.log(page);
 
     const sort = validateSort(req, res, true);
     if (sort == '') return;
-    console.log(sort);
 
     const order = validateOrder(req, res);
     if (order == '') return;
-    console.log(order);
     
 
     // Init connection and query
@@ -150,6 +161,48 @@ router.route(`/${TABLE_NAME}/search`).get(async (req, res) => { // Search ingred
         console.error(err);
         res.status(500);
         res.json({ error: "The server couldn't perform a search" });
+    } finally {
+        conn.end();
+    }
+});
+
+router.route(`/${TABLE_NAME}/search/pages`).get(async (req, res) => {
+    // Validate parameters
+    if (!(req.query.query || req.query.type)) {
+        res.status(400);
+        res.json({ error: "Request is missing parameters query or type" });
+    }
+
+    const limit = validateLimit(req, res);
+    if (limit == -1) return;
+
+    // Init connection and query
+    const conn = await createConnection();
+    let db_query = `SELECT COUNT(id)/${limit} FROM ${TABLE_NAME} WHERE `;
+    const db_values = [];
+
+    // Build query
+    if (req.query.query) {
+        if (db_values.length > 0) db_query += ' AND ';
+        db_query += `(name_sr LIKE ? OR name_en LIKE ?)`;
+        db_values.push(`%${req.query.query}%`, `%${req.query.query}`);
+    } if (req.query.type) {
+        if (db_values.length > 0) db_query += ' AND ';
+        db_query += 'type = ?';
+        db_values.push(req.query.type);
+    };
+
+
+    // Search and return results/handle errors
+    try {
+        const response: Array<object> = await conn.query(db_query, db_values);
+
+        res.status(200);
+        res.json(Math.ceil(Object.values(response[0])[0]));
+    } catch (err) {
+        console.error(err);
+        res.status(500);
+        res.json({ error: "The server couldn't get pages for search" });
     } finally {
         conn.end();
     }
