@@ -115,7 +115,7 @@ function Namirnice() {
         if (page === 1) {
             prev_page_button.classList.remove('cursor-pointer');
             prev_page_button.classList.add('cursor-not-allowed');
-        } else if (page === 2) {
+        } else {
             prev_page_button.classList.remove('cursor-not-allowed');
             prev_page_button.classList.add('cursor-pointer');
         }
@@ -124,7 +124,7 @@ function Namirnice() {
         if (page === pages) {
             next_page_button.classList.remove('cursor-pointer');
             next_page_button.classList.add('cursor-not-allowed');
-        } else if (page == pages - 1) {
+        } else {
             next_page_button.classList.remove('cursor-not-allowed');
             next_page_button.classList.add('cursor-pointer');
         }
