@@ -20,10 +20,17 @@ router.route(`/${TABLE_NAME}`).get(async (req, res) => { // Get all ingredients
     const page = validatePage(req, res);
     if (page == -1) return;
     
+    const sort = validateSort(req, res, true);
+    if (sort == '') return;
+    console.log(sort);
+
+    const order = validateOrder(req, res);
+    if (order == '') return;
+    console.log(order);
 
     const conn = await createConnection();
     try {
-        const response = await conn.query(`SELECT * FROM ${TABLE_NAME} OFFSET ${(page - 1) * limit} ROWS FETCH NEXT ${limit} ROWS ONLY;`);
+        const response = await conn.query(`SELECT * FROM ${TABLE_NAME} ORDER BY ${conn.escapeId(sort)} ${order.toUpperCase()} OFFSET ${(page - 1) * limit} ROWS FETCH NEXT ${limit} ROWS ONLY;`);
         Joi.assert(response, schemas.ingredients);
 
         res.status(200);

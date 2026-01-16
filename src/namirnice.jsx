@@ -26,7 +26,7 @@ function Namirnice() {
         try{
             setUcita(true);
             setEror(null);
-            const rensponse = await axios.get(`${baza}/ingredients`, { params: {limit: 32, page: page}});
+            const rensponse = await axios.get(`${baza}/ingredients`, { params: {limit: 32, page: page, sort: sort, order: order}});
             setHrana(rensponse.data);
             setUcita(false);
         }
@@ -130,15 +130,15 @@ function Namirnice() {
                             <div id='types-menu' className='inline-block p-3.5 space-y-2'>
                                 <label htmlFor='fruit' className="block">
                                     <input type="radio" name="type" id="fruit" onClick={element => setType(element.target.id)}/>
-                                    Fruits
+                                    Voće
                                 </label>
                                 <label htmlFor='vegetable' className="block">
                                     <input type="radio" name="type" id="vegetable" onClick={element => setType(element.target.id)}/>
-                                    Vegetables
+                                    Povrće
                                 </label>
                                 <label htmlFor='animal product' className="block">
                                     <input type="radio" name="type" id="animal product" onClick={element => setType(element.target.id)}/>
-                                    Animal Products
+                                    Životinjski Proizvodi
                                 </label>
                             </div>
                         </el-menu>
@@ -150,31 +150,31 @@ function Namirnice() {
                             <div>
                                 <label htmlFor='sort-id' className='block'>
                                     <input type="radio" name="sort" id="sort-id" onClick={event => setSort(event.target.id.split('-')[1])}/>
-                                    Id
+                                    Default
                                 </label>
                                 <label htmlFor='sort-name_sr' className='block'>
                                     <input type="radio" name="sort" id="sort-name_sr" onClick={event => setSort(event.target.id.split('-')[1])}/>
-                                    Name (SR)
+                                    Ime (SR)
                                 </label>
                                 <label htmlFor='sort-name_end' className='block'>
                                     <input type="radio" name="sort" id="sort-name_en" onClick={event => setSort(event.target.id.split('-')[1])}/>
-                                    Name (EN)
+                                    Ime (EN)
                                 </label>
                                 <label htmlFor='sort-kcal' className='block'>
                                     <input type="radio" name="sort" id="sort-kcal" onClick={event => setSort(event.target.id.split('-')[1])}/>
-                                    kcal
+                                    Calorije (kcal)
                                 </label>
                                 <label htmlFor='sort-protein' className='block'>
                                     <input type="radio" name="sort" id="sort-protein" onClick={event => setSort(event.target.id.split('-')[1])}/>
-                                    Protein
+                                    Proteini
                                 </label>
                                 <label htmlFor='sort-carbohydrates' className='block'>
                                     <input type="radio" name="sort" id="sort-carbohydrates" onClick={event => setSort(event.target.id.split('-')[1])}/>
-                                    Carbohydrates
+                                    Ugljeni Hidrati
                                 </label>
                                 <label htmlFor='sort-fats' className='block'>
                                     <input type="radio" name="sort" id="sort-fats" onClick={event => setSort(event.target.id.split('-')[1])}/>
-                                    Fats
+                                    Masti
                                 </label>
                             </div>
                             <div>
